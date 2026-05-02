@@ -4,7 +4,7 @@ from datetime import datetime
 db = SQLAlchemy()
 
 class License(db.Model):
-    __tabelename__ = 'licenses'
+    __tablename__ = 'licenses'
 
     id = db.Column(db.Integer, primary_key=True)
     employee_name = db.Column(db.String(100))
@@ -16,7 +16,7 @@ class License(db.Model):
 
 
 class Notification(db.Model):
-    __tabelename__ = 'notifications'
+    __tablename__ = 'notifications'
 
     id = db.Column(db.Integer,primary_key=True)
     message = db.Column(db.String(255))

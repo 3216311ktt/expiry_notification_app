@@ -3,6 +3,7 @@ import time
 from plyer import notification
 import platform
 import os
+import webbrowser
 
 SERVER_URL = "http://127.0.0.1:5000/notifications"
 
@@ -24,6 +25,8 @@ SERVER_URL = "http://127.0.0.1:5000/notifications"
 #         message=message,
 #         timeout=10
 #     )
+def open_ui():
+    webbrowser.open("http://127.0.0.1:5000/ui")
 
 def play_sound():
     os.system('afplay /System/Library/Sounds/Ping.aiff')
@@ -46,6 +49,10 @@ def main():
                 if n["id"] not in seen_ids:
                     show_notification("資格更新通知", n["message"])
                     play_sound()
+                    open_ui()
+
+                    requests.get(f"http://127.0.0.1:5000/read/{n['id']}")
+
                     seen_ids.add(n["id"])
 
         except Exception as e:

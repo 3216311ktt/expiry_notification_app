@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .unread { color: red;}
+            .read { color: gray;}
+        </style>
+    </head>
+    <body>
+        <h2>通知一覧</h2>
+
+        {% for n in notifis %}
+            <div class="{{ 'unread' if not n.is_read else 'read' }}">
+                {{ n.message }}
+                {% if not n.is_read %}
+                    <a href="/read/{{ n.id }}">既読</a>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </body>
+</html>

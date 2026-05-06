@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 from models import db, Notification
 
 app = Flask(__name__)
@@ -34,6 +34,11 @@ def read(id):
         n.is_read = True
         db.session.commit()
     return {"status": "ok"}
+
+@app.route("/ui")
+def ui():
+    notifs = Notification.query.all()
+    return render_template("ui.html", notifs=notifs)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body{
+            font-family:sans-serif;
+            padding:20px;
+        }
+
+        input{
+            width:300px;
+            padding:6px;
+            margin-bottom:10px;
+        }
+
+        button{
+            padding:8px 16px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2>資格追加</h2>
+
+<form method="post">
+
+    <div>
+        <label>社員名</label><br>
+        <input type="text" name="employee_name" required>
+    </div>
+
+    <div>
+        <label>資格名</label><br>
+        <input type="text" name="license_name" required>
+    </div>
+
+    <div>
+        <label>期限</label><br>
+        <input type="date" name="expiry_date" required>
+    </div>
+
+    <div>
+        <label>通知日数</label><br>
+        <input
+            type="number"
+            name="notify_days_before"
+            value="30"
+            required
+        >
+    </div>
+
+    <button type="submit">追加</button>
+
+</form>
+
+</body>
+</html>

@@ -4,56 +4,88 @@ from plyer import notification
 import platform
 import os
 import webbrowser
+from datetime import datetime, timedelta
+
 
 SERVER_URL = "http://127.0.0.1:5000/notifications"
 
-# # 音を鳴らす（5分ごとに分岐）
-# def play_sound():
-#     if platform.system() == "Windows":
-#         import winsound
-#         winsound.Beep(1000, 500)
-#     elif platform.system() == "Darwin":  # Mac
-#         os.system('afplay /System/Library/Sounds/Ping.aiff')
-#     else: # Linux
-#         os.system('paplay /usr/share/sounds/freedesktop/stereo/complete.oga')
-
-
-# # 通知表示
-# def show_notification(title, message):
-#     notification.notify(
-#         title=title,
-#         message=message,
-#         timeout=10
-#     )
 def open_ui():
     webbrowser.open("http://127.0.0.1:5000/ui")
 
+# 音を鳴らす（5分ごとに分岐）
 def play_sound():
-    os.system('afplay /System/Library/Sounds/Ping.aiff')
 
+    for _ in range(2):
+
+        if platform.system() == "Windows":
+            import winsound
+            winsound.PlaySound(
+                "sounds/093518ec.wav",
+                winsound.SND_ALIAS
+        )
+        elif platform.system() == "Darwin":  # Mac
+            os.system('afplay /System/Library/Sounds/Ping.aiff')
+        else: # Linux
+            os.system('paplay /usr/share/sounds/freedesktop/stereo/complete.oga')
+
+        time.sleep(0.1)
+
+# 通知表示
 def show_notification(title, message):
-    os.system(f'''
-    osascript -e 'display notification "{message}" with title "{title}"'
-    ''')
+    if platform.system() == "Windows":
+        notification.notify(
+            title=title,
+            message=message,
+            timeout=10
+        ) # type: ignore
+
+    elif platform.system() == "Darwin":  # Mac
+        os.system(f'''
+        osascript -e 'display notification "{message}" with title "{title}"'
+        ''')
+
+    else:
+        print(f"{title}: {message}")
 
 # メインループ
 def main():
-    seen_ids = set()
+
+    last_notified = {}
 
     while True:
         try:
             res = requests.get(SERVER_URL)
             data = res.json()
 
+            now = datetime.now()
+
             for n in data:
-                if n["id"] not in seen_ids:
-                    show_notification("資格更新通知", n["message"])
+
+                notify_id = n["id"]
+
+                should_notify = False
+
+                if notify_id not in last_notified:
+                    should_notify = True
+
+                else:
+                    elapsed = (
+                        now - last_notified[notify_id]
+                    )
+
+                    if elapsed >= timedelta(minutes=10):
+                        should_notify = True
+
+                if should_notify:
+
+                    show_notification(
+                        "資格更新通知",
+                        n["message"]
+                    )
+
                     play_sound()
-                    open_ui()
 
-                    requests.get(f"http://127.0.0.1:5000/read/{n['id']}")
-
-                    seen_ids.add(n["id"])
+                    last_notified[notify_id] = now
 
         except Exception as e:
             print("エラー:", e)

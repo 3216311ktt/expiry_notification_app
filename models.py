@@ -11,7 +11,7 @@ class License(db.Model):
     license_name = db.Column(db.String(100))
     expiry_date = db.Column(db.Date)
     notify_days_before = db.Column(db.Integer)
-    notified_flag = db.Column(db.Boolean, default= False)
+    notified_flag = db.Column(db.Boolean, default=False)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 

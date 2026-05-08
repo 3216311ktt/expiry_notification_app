@@ -16,13 +16,15 @@ def run_check():
                 exists = Notification.query.filter_by(message=msg).first()
 
                 if not exists:
-                    n = Notification(message=msg)
+                    n = Notification()
+                    n.message=msg
+
                     db.session.add(n)
 
                 l.notified_flag = True
     
 
-            db.session.commit()
+        db.session.commit()
 
 if __name__ == "__main__":
     run_check()

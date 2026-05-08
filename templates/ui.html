@@ -3,13 +3,13 @@
     <head>
         <style>
             .unread { color: red;}
-            .read { color: gray;}
+            .read { color: rgb(177, 170, 170);}
         </style>
     </head>
     <body>
         <h2>通知一覧</h2>
 
-        {% for n in notifis %}
+        {% for n in notifs %}
             <div class="{{ 'unread' if not n.is_read else 'read' }}">
                 {{ n.message }}
                 {% if not n.is_read %}

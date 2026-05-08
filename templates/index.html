@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,td {
+            border: 1px solid #ccc;
+            padding: 10px 14px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        .danger {
+            color: red;
+            font-weight: bold;
+        }
+
+    </style>
+
+</head>
+
+<body>
+    
+<h2>資格一覧</h2>
+
+<p><a href="/add">資格を追加</a></p>
+
+<table>
+    <tr>
+        <th style="width:22%;">社員名</th>
+        <th style="width:34%;">資格名</th>
+        <th style="width:22%;">期限</th>
+        <th style="width:22%;">状態</th>
+    </tr>
+
+    {% for l in alert_licenses %}
+
+        {% set days_left = (l.expiry_date - today).days %}
+
+        <tr>
+
+            <td>{{ l.employee_name }}</td>
+
+            <td>
+                <a href="/edit/{{ l.id }}" class="danger">
+                    {{ l.license_name }}
+                </a>
+            </td>
+
+            <td>{{ l.expiry_date }}</td>
+
+            <td>期限間近</td>
+
+        </tr>
+
+    {% endfor %}
+
+    {% for l in normal_licenses %}
+
+        {% set days_left = (l.expiry_date - today).days %}
+
+        <tr>
+
+            <td>{{ l.employee_name }}</td>
+
+            <td>{{ l.license_name }}</td>
+
+            <td>{{ l.expiry_date }}</td>
+
+            <td>正常</td>
+
+        </tr>
+
+    {% endfor %}
+    
+
+</table>
+
+</body>
+
+</html>

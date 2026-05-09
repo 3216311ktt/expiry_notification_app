@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, render_template, request, redirect
-from models import db, Notification, License
+from models import db, Notification, NotificationRead, License
 from datetime import date, datetime
 
 app = Flask(__name__)
@@ -17,6 +17,26 @@ with app.app_context():
 
 @app.route("/")
 def index():
+
+    client = request.args.get("client", "common")
+
+    if client:
+        notifs = Notification.query.all()
+
+        for n in notifs:
+            exists = NotificationRead.query.filter_by(
+                notification_id=n.id,
+                client_name=client
+            ).first()
+
+            if not exists:
+                r = NotificationRead(
+                    notification_id=n.id, # type: ignore
+                    client_name=client # type: ignore
+                )
+                db.session.add(r)
+
+        db.session.commit()
 
     licenses = License.query.all()
 
@@ -41,6 +61,7 @@ def index():
         today=today
     )
 
+
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit(id):
 
@@ -52,6 +73,11 @@ def edit(id):
         license.license_name = request.form["license_name"] # type: ignore
         license.expiry_date = datetime.strptime(request.form["expiry_date"], "%Y-%m-%d").date() # type: ignore
         license.notify_days_before = int(request.form["notify_days_before"]) # type: ignore
+        license.notified_flag = False # type: ignore
+
+        Notification.query.filter_by(
+            target=f"license:{license.id}" # type: ignore
+        ).delete()
 
         db.session.commit()
 
@@ -82,40 +108,51 @@ def add():
 
 @app.route("/notifications")
 def get_notifications():
-    notifs = Notification.query.filter_by(is_read=False).all()
 
-    return jsonify([
-        {
-            "id": n.id,
-            "message": n.message,
-            "time": n.created_at
-        } for n in notifs
-    ])
+    client = request.args.get("client", "common")
+
+    notifs = Notification.query.order_by(Notification.created_at.desc()).all()
+
+    unread = []
+
+    for n in notifs:
+        already_read = NotificationRead.query.filter_by(
+            notification_id=n.id,
+            client_name=client
+        ).first()
+
+        if not already_read:
+            unread.append({
+                "id": n.id,
+                "message": n.message,
+                "time": n.created_at
+            })
+
+    return jsonify(unread)
 
 
 @app.route("/read/<int:id>")
 def read(id):
-    n = Notification.query.get(id)
-    if n:
-        n.is_read = True
+
+    client = request.args.get("client", "common")
+
+    exists = NotificationRead.query.filter_by(
+        notification_id=id,
+        client_name=client
+    ).first()
+
+    if not exists:
+        r = NotificationRead(
+            notification_id=id, # type: ignore
+            client_name=client # type: ignore
+        )
+        db.session.add(r)
         db.session.commit()
+        
     return {"status": "ok"}
 
 
-@app.route("/ui")
-def ui():
-
-    notifs = Notification.query.all()
-
-    unread = Notification.query.filter_by(is_read=False).all()
-
-    for n in unread:
-        n.is_read = True
-
-    db.session.commit()
-
-    return render_template("ui.html", notifs=notifs)
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5001, debug=False)

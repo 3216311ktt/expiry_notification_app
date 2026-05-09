@@ -22,4 +22,24 @@ class Notification(db.Model):
     message = db.Column(db.String(255))
     target = db.Column(db.String(50), default="all")
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    is_read = db.Column(db.Boolean,default=False)
+
+    reads = db.relationship(
+        "NotificationRead",
+        backref= "notification",
+        lazy=True,
+        cascade="all, delete-orphan"
+    )
+
+class NotificationRead(db.Model):
+    __tablename__ = "notification_reads"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    notification_id = db.Column(
+        db.Integer,
+        db.ForeignKey("notifications.id"),
+        nullable=False
+    )
+
+    client_name = db.Column(db.String(50), nullable=False)
+    read_at = db.Column(db.DateTime, default=datetime.utcnow)

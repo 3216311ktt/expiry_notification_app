@@ -5,12 +5,17 @@ import platform
 import os
 import webbrowser
 from datetime import datetime, timedelta
+from win10toast_click import ToastNotifier
 
+toaster = ToastNotifier()
 
-SERVER_URL = "http://127.0.0.1:5000/notifications"
+SERVER_HOST = "KTTminiPC"
+CLIENT_NAME = "admin"
+SERVER_URL = f"http://{SERVER_HOST}/notifications?client={CLIENT_NAME}"
 
-def open_ui():
-    webbrowser.open("http://127.0.0.1:5000/ui")
+def open_index():
+    webbrowser.open(f"http://{SERVER_HOST}/?client={CLIENT_NAME}")
+    return 0
 
 # 音を鳴らす（5分ごとに分岐）
 def play_sound():
@@ -33,11 +38,15 @@ def play_sound():
 # 通知表示
 def show_notification(title, message):
     if platform.system() == "Windows":
-        notification.notify(
-            title=title,
-            message=message,
-            timeout=10
+        toaster.show_toast(
+            title,
+            message,
+            duration=10,
+            threaded=True,
+            callback_on_click=open_index   
         ) # type: ignore
+
+        time.sleep(12)
 
     elif platform.system() == "Darwin":  # Mac
         os.system(f'''
@@ -54,7 +63,7 @@ def main():
 
     while True:
         try:
-            res = requests.get(SERVER_URL)
+            res = requests.get(SERVER_URL, timeout=3)
             data = res.json()
 
             now = datetime.now()

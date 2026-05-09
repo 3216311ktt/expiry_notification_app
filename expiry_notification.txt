@@ -1,0 +1,6 @@
+Flask
+Flask-SQLAlchemy
+requests
+plyer
+win10toast-click
+setuptools==75.8.0

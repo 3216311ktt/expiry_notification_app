@@ -9,7 +9,7 @@ from win10toast_click import ToastNotifier
 
 toaster = ToastNotifier()
 
-SERVER_HOST = "KTTminiPC"
+SERVER_HOST = "KTTminiPC:5001"
 CLIENT_NAME = "admin"
 SERVER_URL = f"http://{SERVER_HOST}/notifications?client={CLIENT_NAME}"
 

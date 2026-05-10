@@ -49,19 +49,19 @@
 
         {% set days_left = (l.expiry_date - today).days %}
 
-        <tr>
+        <tr class="danger">
 
             <td>{{ l.employee_name }}</td>
 
-            <td>
-                <a href="/edit/{{ l.id }}" class="danger">
-                    {{ l.license_name }}
-                </a>
-            </td>
+            <td>{{ l.license_name }}</td>
 
             <td>{{ l.expiry_date }}</td>
 
             <td>期限間近</td>
+
+            <td>
+                <a href="/edit/{{ l.id }}">編集</a>
+            </td>
 
         </tr>
 
@@ -80,6 +80,10 @@
             <td>{{ l.expiry_date }}</td>
 
             <td>正常</td>
+
+            <td>
+                <a href="/edit/{{ l.id }}">編集</a>
+            </td>
 
         </tr>
 

@@ -76,7 +76,7 @@ def edit(id):
         license.notified_flag = False # type: ignore
 
         Notification.query.filter_by(
-            target=f"license:{license.id}" # type: ignore
+            target=f"license_{license.id}" # type: ignore
         ).delete()
 
         db.session.commit()

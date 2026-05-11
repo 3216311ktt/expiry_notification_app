@@ -26,7 +26,7 @@ def play_sound():
             import winsound
             winsound.PlaySound(
                 "sounds/093518ec.wav",
-                winsound.SND_ALIAS
+                winsound.SND_FILENAME
         )
         elif platform.system() == "Darwin":  # Mac
             os.system('afplay /System/Library/Sounds/Ping.aiff')
@@ -46,7 +46,7 @@ def show_notification(title, message):
             callback_on_click=open_index   
         ) # type: ignore
 
-        time.sleep(12)
+        time.sleep(1)
 
     elif platform.system() == "Darwin":  # Mac
         os.system(f'''
@@ -90,9 +90,11 @@ def main():
                     show_notification(
                         "資格更新通知",
                         n["message"]
+    
                     )
 
                     play_sound()
+
 
                     last_notified[notify_id] = now
 

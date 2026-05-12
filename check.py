@@ -39,8 +39,7 @@ def run_check():
                 l.notified_flag = True
     
         db.session.commit()
-
+        
 
 if __name__ == "__main__":
     run_check()
-

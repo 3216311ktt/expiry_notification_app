@@ -12,8 +12,8 @@ while True:
     # 平日だけ
     if now.weekday() < 5:
 
-        # 9:02
-        if now.hour == 9 and now.minute == 2:
+        # 9:00に実行
+        if now.hour == 9 and now.minute == 00:
 
             today = now.date()
 

@@ -75,15 +75,49 @@ def edit(id):
         license.notify_days_before = int(request.form["notify_days_before"]) # type: ignore
         license.notified_flag = False # type: ignore
 
-        Notification.query.filter_by(
+        notif = Notification.query.filter_by(
             target=f"license_{license.id}" # type: ignore
-        ).delete()
+        ).first()
+
+        if notif:
+            
+            NotificationRead.query.filter_by(
+                notification_id=notif.id 
+            ).delete()
+
+             # type: ignore
+            db.session.delete(notif) # type: ignore
 
         db.session.commit()
 
         return redirect("/")
     
     return render_template("edit.html", license=license)
+
+@app.route("/delete/<int:id>", methods=["POST"])
+def delete(id):
+
+    license = License.query.get(id)
+
+    if license:
+
+        notifs = Notification.query.filter_by(
+            target=f"license_{license.id}"
+        ).all()
+        
+        for notif in notifs:
+
+            NotificationRead.query.filter_by(
+                notification_id=notif.id
+            ).delete()
+
+            db.session.delete(notif)
+
+        db.session.delete(license)
+
+        db.session.commit()
+
+    return redirect("/")
 
 @app.route("/add", methods=["GET", "POST"])
 def add():
